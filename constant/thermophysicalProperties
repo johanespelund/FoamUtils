@@ -1,0 +1,82 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermoType
+{
+  type            heRhoThermo;
+  mixture         pureMixture;
+  transport       polynomial;
+  // transport       const;
+  thermo          hPolynomial;
+  // thermo          hConst;
+  // equationOfState rPolynomial;
+  equationOfState PengRobinsonGas;
+  specie          specie;
+  energy          sensibleEnthalpy;
+}
+
+#include "../parameters"
+
+mixture
+{
+  specie
+  {
+    molWeight $M;
+  }
+  thermodynamics
+  {
+    Cp $Cp;
+    // CpCoeffs<8> ( 1122.2  -1e-8 0  0 0  0 0  0 );
+    // CpCoeffs<8> ( $Cp  0 0  0 0  0 0  0 );
+    CpCoeffs<8> $NIST_Cp;
+    Hf $Hf;
+    Tref 10;
+    Href 0;
+    Sf 0;
+
+  }
+  transport
+  {
+    mu $mu;
+    Pr $Pr;
+    
+    // muCoeffs<8> (  $mu  0  0 0  0 0 0 0 );
+    // kappaCoeffs<8> ( 0.0075  0 0 0 0 0 0 0 );
+
+    muCoeffs<8> $NIST_Viscosity;
+    kappaCoeffs<8> $NIST_ThermalConductivity;
+  }
+  equationOfState
+  {
+
+    C $NIST_rPolynomial;
+    Tc 33.145;
+    Pc 1.2964e6;
+    Vc 0.0644828;
+    omega -0.219;
+
+    // Nitrogen
+    // Tc 126.192;
+    // Pc 3.3958e6;
+    // Vc 0.0894;
+    // omega 0.0372;
+
+  }
+  // dpdt true;
+}
+
+
+// ************************************************************************* //
