@@ -2,9 +2,13 @@ from setuptools import setup
 
 
 def readfile(filename):
-    with open(filename, "r+") as f:
+    with open(filename, "r") as f:
         return f.read()
 
+def parse_requirements(filename):
+    """Load requirements from a pip requirements file."""
+    with open(filename, 'r') as f:
+        return f.read().splitlines()
 
 setup(
     name="FoamUtils",
@@ -20,7 +24,7 @@ setup(
         "file_utils",
         "wall_profiles",
     ],
-    # license=readfile('LICENSE'),
+    install_requires=parse_requirements('requirements.txt'),
     entry_points={
         "console_scripts": [
             "plot_res = FoamUtils.plot_residuals:main",
