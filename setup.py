@@ -10,7 +10,7 @@ setup(
     name="FoamUtils",
     version="0.1",
     description="Utility functions for OpenFOAM",
-    # long_description=readfile('README.md'),
+    long_description=readfile('README.md'),
     author="Johan R. Espelund",
     author_email="johan.espelund@sintef.no",
     url="https://github.com/johanespelund/FoamUtils",
