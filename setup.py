@@ -13,7 +13,7 @@ setup(
     # long_description=readfile('README.md'),
     author="Johan R. Espelund",
     author_email="johan.espelund@sintef.no",
-    url="",
+    url="https://github.com/johanespelund/FoamUtils",
     py_modules=[
         "plot_residuals",
         "ThermophysicalProperties",
