@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scienceplots
 
-plt.style.use(["science", "nature"])
+plt.style.use(["science", "nature", "no-latex"])
 
 ### Definition of the plot function. Options are passed as arguments to the main function ###
 
