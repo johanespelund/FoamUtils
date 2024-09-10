@@ -6,7 +6,7 @@ import numpy as np
 import scienceplots
 from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 
-plt.style.use(["science"])
+plt.style.use(["science", "no-latex", "grid"])
 
 
 class ThermophysicalProperties:
@@ -51,6 +51,12 @@ class ThermophysicalProperties:
             self.mu = lambda T: mu * np.ones_like(T)
             self.Pr = lambda T: Pr * np.ones_like(T)
             self.kappa = lambda T: mu * self.Cp(T) / Pr
+        elif self.properties["thermoType"]["transport"] == "sutherland":
+            Ts = self.properties["mixture"]["transport"]["Ts"]
+            As = self.properties["mixture"]["transport"]["As"]
+            self.mu = lambda T: sutherland_mu(As, Ts, T)
+            self.kappa = lambda T: sutherland_kappa(As, Ts, T, self.Cp(T), self.R)
+            self.Pr = lambda T: self.mu(T) * self.Cp(T) / self.kappa(T)
 
         ### equationOfState ###
         if self.properties["thermoType"]["equationOfState"] == "rPolynomial":
@@ -105,7 +111,7 @@ class ThermophysicalProperties:
             elif prop == "Cp":
                 ax[i].plot(T, self.Cp(T), label="Heat capacity", color=color)
             elif prop == "mu":
-                ax[i].plot(T, self.mu(T), label="Dynamic viscosity", color=color)
+                ax[i].plot(T, self.mu(T)*1e6, label="Dynamic viscosity", color=color)
             elif prop == "kappa":
                 ax[i].plot(T, self.kappa(T), label="Thermal conductivity", color=color)
             elif prop == "beta":
@@ -215,6 +221,16 @@ def rPolynomial(T, p, coeffs):
     """
     c = coeffs
     return 1 / (c[0] + c[1] * T + c[2] * T**2 - c[3] * p - c[4] * p * T)
+
+
+def sutherland_mu(As, Ts, T):
+    return As * np.sqrt(T) / (1 + Ts / T)
+
+
+def sutherland_kappa(As, Ts, T, Cp, R):
+    Cv = Cp - R
+    mu = sutherland_mu(As, Ts, T)
+    return mu * Cv * (1.32 + 1.77 * R / Cv)
 
 
 def plot_thermophysical_properties(
