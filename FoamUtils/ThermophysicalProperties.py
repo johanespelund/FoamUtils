@@ -54,9 +54,10 @@ class ThermophysicalProperties:
         elif self.properties["thermoType"]["transport"] == "sutherland":
             Ts = self.properties["mixture"]["transport"]["Ts"]
             As = self.properties["mixture"]["transport"]["As"]
+            Pr = self.properties["mixture"]["transport"]["Pr"]
+            self.Pr = lambda T: Pr * np.ones_like(T)
             self.mu = lambda T: sutherland_mu(As, Ts, T)
             self.kappa = lambda T: sutherland_kappa(As, Ts, T, self.Cp(T), self.R)
-            self.Pr = lambda T: self.mu(T) * self.Cp(T) / self.kappa(T)
 
         ### equationOfState ###
         if self.properties["thermoType"]["equationOfState"] == "rPolynomial":
@@ -230,6 +231,8 @@ def sutherland_mu(As, Ts, T):
 def sutherland_kappa(As, Ts, T, Cp, R):
     Cv = Cp - R
     mu = sutherland_mu(As, Ts, T)
+    print(f"R: {R}, Cv: {Cv}, mu: {mu}")
+    # return mu*1.4*R/(0.4*0.71)
     return mu * Cv * (1.32 + 1.77 * R / Cv)
 
 

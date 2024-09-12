@@ -2,27 +2,10 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from . import ThermophysicalProperties, file_utils
 
 ## Utilities for post processing data to get wall profiles for U+ and T+
 
-def read_parameters(path="parameters"):
-    """
-    Read the parameters file, in OpenFOAM format.
-    """
-    p = {}
-    with open(path, "r") as f:
-        for line in f:
-            if line.startswith("//") or line.startswith("/*"):
-                continue
-            if line.startswith("}"):
-                break
-            key, value = line.split(" ", 1)
-            try:
-                value = float(value.strip()[:-1])
-            except ValueError:
-                value = value.strip()[:-1]
-            p[key] = value
-    return p
 
 
 def generate_polynomial(foam_string):
@@ -76,7 +59,7 @@ def average(T_low, T_high, property):
     return np.trapz(property(T), T) / (T_high - T_low)
 
 
-def tau_wall(u, n, T_w):
+def tau_wall(u, n, T_w, thermo):
     """
     Calculate the wall shear stress given the velocity profile and wall temperature
     u (np.array): The velocity profile
@@ -84,7 +67,7 @@ def tau_wall(u, n, T_w):
     T_w (float): The wall temperature
     """
     dudn = np.gradient(u, n)[0]
-    mu_wall = mu(T_w)
+    mu_wall = thermo.mu(T_w)
     return mu_wall * dudn
 
 def q_wall(T, n, thermo):
@@ -115,7 +98,7 @@ def friction_temperature(q_wall, tau_wall, T, rho, thermo):
     """
     return q_wall / (rho * thermo.Cp(T[0]) * friction_velocity(tau_wall, rho))
 
-def u_plus(u, T, n, rho):
+def u_plus(u, T, n, rho, thermo):
     """
     Calculate the dimensionless velocity profile
     u (np.array): The velocity profile
@@ -123,7 +106,7 @@ def u_plus(u, T, n, rho):
     n (np.array): The normal distance profile
     rho (float): The density
     """
-    tau_w = tau_wall(u, n, T[0])
+    tau_w = tau_wall(u, n, T[0], thermo)
     return u / friction_velocity(tau_w, rho)
 
 def phi_plus(u, T, n, rho, Tref, thermo):
@@ -134,7 +117,7 @@ def phi_plus(u, T, n, rho, Tref, thermo):
     rho (float): The density
     mu (np.array): The dynamic viscosity
     """
-    tau_w = tau_wall(u, n, T[0])
+    tau_w = tau_wall(u, n, T[0], thermo)
     q_w = q_wall(T, n, thermo)
     Cp_w = thermo.Cp(T[0])
     phi_tau = friction_temperature(q_w, tau_w, T, rho, thermo)
@@ -144,7 +127,7 @@ def phi_plus(u, T, n, rho, Tref, thermo):
     return (phi_w - phi_bar) / (phi_tau)
 
 
-def n_plus(u, T, n, rho):
+def n_plus(u, T, n, rho, thermo):
     """
     Calculate the dimensionless distance profile
     u (np.array): The velocity profile
@@ -152,8 +135,8 @@ def n_plus(u, T, n, rho):
     n (np.array): The normal distance profile
     rho (float): The density
     """
-    u_tau = friction_velocity(tau_wall(u, n, T[0]), rho)
-    return n * rho * u_tau / mu(T[0])
+    u_tau = friction_velocity(tau_wall(u, n, T[0], thermo), rho)
+    return n * rho * u_tau / thermo.mu(T[0])
 
 
 def Nusselt(q, deltaT, L, kappa):
@@ -219,7 +202,4 @@ def beta_PengRobinson(T, P, p):
     return -1 / rho_PengRobinson(T, P, p) * drhodT
 
 
-p = read_parameters()
-
-print(f"Rayleigh number: {get_Ra(p) : .2e}")
 
