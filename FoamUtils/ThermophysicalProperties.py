@@ -70,6 +70,9 @@ class ThermophysicalProperties:
             Pc = self.properties["mixture"]["equationOfState"]["Pc"]
             omega = self.properties["mixture"]["equationOfState"]["omega"]
             self.rho = lambda p, T: rho_PengRobinson(T, p, self.R, Tc, Pc, omega)
+        elif self.properties["thermoType"]["equationOfState"] == "icoPolynomial":
+            coeffs = np.flip(self.properties["mixture"]["equationOfState"]["rhoCoeffs<8>"])
+            self.rho = lambda p, T: np.poly1d(coeffs)
 
     def beta(self, p, T):
         """
