@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import pandas as pd
 
 
 def get_sorted_times(dir):
@@ -62,4 +63,63 @@ def load_wallHeatFlux(filename, start=0, end=-1):
         wall_heat_flows[key] = np.array(wall_heat_flows[key])[start:end]
 
     return times, wall_heat_flows
+
+
+def load_sampling_set(sampling_dir, time, set_name):
+    """
+    Load data from OpenFOAM sample sets.
+    Parameters:
+    - sampling_dir: Name of the sampling directory, e.g. "postProcessing/linesampling"
+    - time: Time directory, e.g. "0.1"
+    - set_name: Name of the set, e.g. "centerline"
+
+    Returns:
+    - pandas DataFrame with the data
+    """
+    files = os.listdir(f"{sampling_dir}/{time}/")
+    samples = [f.split("_")[0] for f in files]
+    file_type = ''
+
+
+    for file in files:
+        if f"{set_name}_" in file:
+            filename = f"{sampling_dir}/{time}/{file}"
+            filetype = file.split(".")[1]
+            
+            if filetype == "csv":
+                df = pd.read_csv(filename)
+                df.columns = [str(col) for col in df.columns]
+                df.columns = [col.replace("_0", "x").replace("_1", "y").replace("_2", "z") for col in df.columns]
+
+
+            elif filetype == "xy":
+                fields_string = file.replace(f"{set_name}_", "").split(".")[0]
+                fields = ["z"] + fields_string.split("_")
+                raw_data = np.loadtxt(filename)
+                data = {}
+
+                # Split vector fields into components
+                offset = 0
+                for i in range(len(fields)):
+                    j = i + offset
+                    field_name = fields[i]
+                    if "U" in field_name:
+                        data[f"{field_name}x"] = raw_data[:, j]
+                        offset += 1
+                        j = i + offset
+                        data[f"{field_name}y"] = raw_data[:, j]
+                        offset += 1
+                        j = i + offset
+                        data[f"{field_name}z"] = raw_data[:, j]
+                    else:
+                        data[field_name] = raw_data[:, j]
+
+                df = pd.DataFrame(data)
+
+            # Remove rows that have duplicated values in the first column
+            df.drop_duplicates(subset=df.columns[0], inplace=True)
+
+            return df
+
+    return data
 
