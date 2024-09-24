@@ -89,6 +89,12 @@ class ThermophysicalProperties:
             drhodT = (rho1 - rho) / (T1 - T)
             return -1 / self.rho(p, T) * drhodT
 
+    def alpha(self, p, T):
+        """
+        Thermal diffusivity.
+        """
+        return self.kappa(T) / (self.rho(p, T) * self.Cp(T))
+
     def plot(self, T, p, properties, axes=None, color="C0", legend=False):
         """
         Plot the thermophysical properties.
