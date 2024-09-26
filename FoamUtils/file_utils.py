@@ -57,7 +57,17 @@ def load_all_times(times_dir, use_latest_run=True):
             files = [f for f in files if not f.endswith(f"_{time}")]
         for file in files:
             filename = f"{times_dir}/{time}/{file}"
-            df = pd.read_csv(filename, sep="\t", comment="#")
+
+            # The last row with comments are the column names
+            # Need to read this separately to get the column names
+
+            with open(filename, "r") as f:
+                for line in f:
+                    if line[0] != "#":
+                        break
+            column_names = line[1:].split()
+            df = pd.read_csv(filename, comment="#", names=column_names, delim_whitespace=True)
+
             df["time"] = float(time)
             data = pd.concat([data, df], axis=0)
     return data
