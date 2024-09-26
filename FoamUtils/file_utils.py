@@ -31,6 +31,38 @@ def read_parameters(path="parameters"):
             p[key] = value
     return p
 
+
+def load(filename):
+    data = np.loadtxt(filename, comments="#")
+    times = data[start:end, 0]
+    values = [data[start:end, i] for i in range(1, data.shape[1])]
+    return (times, *values)
+
+
+def load_all_times(times_dir, use_latest_run=True):
+    """
+    Load data from all time directories in a given directory.
+    - times_dir: Directory containing time directories, e.g. "postProcessing/forces"
+    - use_latest_run: If True, only load the latest run in each time directory, e.g. "wallHeatFlux_0.dat"
+    Returns a merged pandas DataFrame with all data.
+    """
+    times = get_sorted_times(times_dir)
+    data = pd.DataFrame()
+
+    for time in times:
+        if use_latest_run:
+            files = os.listdir(f"{times_dir}/{time}")
+        else:
+            files = os.listdir(f"{times_dir}/{time}")
+            files = [f for f in files if not f.endswith(f"_{time}")]
+        for file in files:
+            filename = f"{times_dir}/{time}/{file}"
+            df = pd.read_csv(filename, sep="\t", comment="#")
+            df["time"] = float(time)
+            data = pd.concat([data, df], axis=0)
+    return data
+
+
 def load_wallHeatFlux(filename, start=0, end=-1):
     wall_heat_flows = {}
     times = set()
