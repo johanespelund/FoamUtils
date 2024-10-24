@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 
 
 def get_sorted_times(dir):
@@ -14,22 +15,9 @@ def get_sorted_times(dir):
 
 def read_parameters(path="parameters"):
     """
-    Read the parameters file, in OpenFOAM format.
+    Read the parameters file, in OpenFOAM format, using PyFoam.
     """
-    p = {}
-    with open(path, "r") as f:
-        for line in f:
-            if line.startswith("//") or line.startswith("/*"):
-                continue
-            if line.startswith("}"):
-                break
-            key, value = line.split(" ", 1)
-            try:
-                value = float(value.strip()[:-1])
-            except ValueError:
-                value = value.strip()[:-1]
-            p[key] = value
-    return p
+    return ParsedParameterFile(path, noHeader=True).getValueDict()
 
 
 def load(filename):
@@ -58,18 +46,20 @@ def load_all_times(times_dir, use_latest_run=True):
         for file in files:
             filename = f"{times_dir}/{time}/{file}"
 
-            # The last row with comments are the column names
-            # Need to read this separately to get the column names
-
             with open(filename, "r") as f:
-                for line in f:
+                is_comment = True
+                prev_line = ""
+                while is_comment:
+                    line = f.readline()
                     if line[0] != "#":
-                        break
-            column_names = line[1:].split()
-            df = pd.read_csv(filename, comment="#", names=column_names, delim_whitespace=True)
-
-            df["time"] = float(time)
+                        is_comment = False
+                        column_names = prev_line[1:].split()
+                    prev_line = line
+            df = pd.read_csv(filename, comment="#", names=column_names, sep="\s+")
+            # df["time"] = float(time)
             data = pd.concat([data, df], axis=0)
+    # Sort by time
+    data = data.sort_values("Time")
     return data
 
 
@@ -136,7 +126,7 @@ def load_sampling_set(sampling_dir, time, set_name):
 
             elif filetype == "xy":
                 fields_string = file.replace(f"{set_name}_", "").split(".")[0]
-                fields = ["z"] + fields_string.split("_")
+                fields = ["x"] + fields_string.split("_")
                 raw_data = np.loadtxt(filename)
                 data = {}
 
