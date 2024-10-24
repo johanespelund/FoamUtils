@@ -240,7 +240,6 @@ def sutherland_mu(As, Ts, T):
 def sutherland_kappa(As, Ts, T, Cp, R):
     Cv = Cp - R
     mu = sutherland_mu(As, Ts, T)
-    print(f"R: {R}, Cv: {Cv}, mu: {mu}")
     # return mu*1.4*R/(0.4*0.71)
     return mu * Cv * (1.32 + 1.77 * R / Cv)
 
