@@ -3,9 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scienceplots
 
-plt.style.use(["science", "nature", "no-latex"])
-
-### Definition of the plot function. Options are passed as arguments to the main function ###
+plt.style.use(["science", "nature", "no-latex", "grid"])
 
 
 def plot(dir, res_type, save, dpi, ncol, legend_box, time_unit, time_folder):
