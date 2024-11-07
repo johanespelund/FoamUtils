@@ -20,12 +20,25 @@ def read_parameters(path="parameters"):
     return ParsedParameterFile(path, noHeader=True).getValueDict()
 
 
-def load(filename):
-    data = np.loadtxt(filename, comments="#")
-    times = data[start:end, 0]
-    values = [data[start:end, i] for i in range(1, data.shape[1])]
-    return (times, *values)
-
+def load(filename, start=0, end=-1):
+    # data = np.loadtxt(filename, comments="#")
+    # times = data[start:end, 0]
+    # values = [data[start:end, i] for i in range(1, data.shape[1])]
+    # return (times, *values)
+    """
+    Rewrite using pandas. 
+    """
+    with open(filename, "r") as f:
+        is_comment = True
+        prev_line = ""
+        while is_comment:
+            line = f.readline()
+            if line[0] != "#":
+                is_comment = False
+                column_names = prev_line[1:].split()
+            prev_line = line
+    df = pd.read_csv(filename, comment="#", names=column_names, sep="\s+")
+    return df
 
 def load_all_times(times_dir, use_latest_run=True):
     """
@@ -97,7 +110,7 @@ def load_wallHeatFlux(filename, start=0, end=-1):
     return times, wall_heat_flows
 
 
-def load_sampling_set(sampling_dir, time, set_name):
+def load_sampling_set(sampling_dir, time, set_name, org=False):
     """
     Load data from OpenFOAM sample sets.
     Parameters:
@@ -114,14 +127,24 @@ def load_sampling_set(sampling_dir, time, set_name):
 
 
     for file in files:
-        if f"{set_name}_" in file:
+        print(f"Checking if {set_name} is in {file}")
+        print(f"{set_name}" in file)
+
+        check = f"{set_name}" in file if org else f"{set_name}_" in file
+
+        if check:
+            print(f"Loading {file}")
             filename = f"{sampling_dir}/{time}/{file}"
             filetype = file.split(".")[1]
             
             if filetype == "csv":
                 df = pd.read_csv(filename)
                 df.columns = [str(col) for col in df.columns]
-                df.columns = [col.replace("_0", "x").replace("_1", "y").replace("_2", "z") for col in df.columns]
+                if not org:
+                    df.columns = [col.replace("_0", "x").replace("_1", "y").replace("_2", "z") for col in df.columns]
+                else:
+                    df.columns = [col.replace("_x", "x").replace("_y", "y").replace("_z", "z") for col in df.columns]
+                print(f"Loaded {filename}")
 
 
             elif filetype == "xy":
