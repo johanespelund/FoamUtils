@@ -125,6 +125,10 @@ class ThermophysicalProperties:
                     label="Thermal expansion coefficient",
                     color=color,
                 )
+            elif prop == "Pr":
+                ax[i].plot(T, self.Pr(T), label="Prandtl number", color=color)
+            elif prop == "alpha":
+                ax[i].plot(T, self.kappa(T) / (self.rho(p, T) * self.Cp(T)), label="Thermal diffusivity", color=color)
             ax[i].set_ylabel(self.unit_label(prop))
             if legend:
                 ax[i].legend()
