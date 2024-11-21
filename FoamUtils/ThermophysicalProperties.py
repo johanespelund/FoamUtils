@@ -89,6 +89,12 @@ class ThermophysicalProperties:
             drhodT = (rho1 - rho) / (T1 - T)
             return -1 / self.rho(p, T) * drhodT
 
+    def alpha(self, p, T):
+        """
+        Thermal diffusivity.
+        """
+        return self.kappa(T) / (self.rho(p, T) * self.Cp(T))
+
     def plot(self, T, p, properties, axes=None, color="C0", legend=False):
         """
         Plot the thermophysical properties.
@@ -238,7 +244,6 @@ def sutherland_mu(As, Ts, T):
 def sutherland_kappa(As, Ts, T, Cp, R):
     Cv = Cp - R
     mu = sutherland_mu(As, Ts, T)
-    print(f"R: {R}, Cv: {Cv}, mu: {mu}")
     # return mu*1.4*R/(0.4*0.71)
     return mu * Cv * (1.32 + 1.77 * R / Cv)
 
