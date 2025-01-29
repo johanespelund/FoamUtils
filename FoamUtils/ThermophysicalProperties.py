@@ -36,6 +36,7 @@ class ThermophysicalProperties:
             self.Cp = np.poly1d(coeffs)
         elif self.properties["thermoType"]["thermo"] == "hConst":
             Cp = self.properties["mixture"]["thermodynamics"]["Cp"]
+            print(self.properties["mixture"]["thermodynamics"]["Cp"])
             self.Cp = lambda T: np.ones_like(T) * Cp
 
         ### transport ###
