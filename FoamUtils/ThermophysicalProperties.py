@@ -82,7 +82,7 @@ class ThermophysicalProperties:
 
         if self.properties["thermoType"]["equationOfState"] == "perfectGas":
             return 1 / T
-        elif self.properties["thermoType"]["equationOfState"] == "PengRobinsonGas":
+        else: 
             # Use finite difference to calculate the derivative d(rho)/dT
             T1 = T + 1e-3
             rho1 = self.rho(p, T1)
