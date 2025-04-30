@@ -76,7 +76,7 @@ class ThermophysicalProperties:
             self.rho = lambda p, T: np.poly1d(coeffs)(T)
         elif self.properties["thermoType"]["equationOfState"] == "Boussinesq":
             beta = self.properties["mixture"]["equationOfState"]["beta"]
-            rho0 = self.properties["mixture"]["equationOfState"]["rho0"]
+            rho0 = self.properties["mixture"]["equationOfState"]["rho"]
             self.rho = lambda p, T: rho0
 
 
