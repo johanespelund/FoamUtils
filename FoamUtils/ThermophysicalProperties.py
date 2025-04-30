@@ -74,7 +74,7 @@ class ThermophysicalProperties:
         elif self.properties["thermoType"]["equationOfState"] == "icoPolynomial":
             coeffs = np.flip(self.properties["mixture"]["equationOfState"]["rhoCoeffs<8>"])
             self.rho = lambda p, T: np.poly1d(coeffs)(T)
-        elif self.properties["thermoType"]["equationOfState"] == "Bousinessq":
+        elif self.properties["thermoType"]["equationOfState"] == "Boussinesq":
             beta = self.properties["mixture"]["equationOfState"]["beta"]
             rho0 = self.properties["mixture"]["equationOfState"]["rho0"]
             self.rho = lambda p, T: rho0
@@ -87,7 +87,7 @@ class ThermophysicalProperties:
 
         if self.properties["thermoType"]["equationOfState"] == "perfectGas":
             return 1 / T
-        elif self.properties["thermoType"]["equationOfState"] == "Bousinessq":
+        elif self.properties["thermoType"]["equationOfState"] == "Boussinesq":
             return self.properties["mixture"]["equationOfState"]["beta"]
         else: 
             # Use finite difference to calculate the derivative d(rho)/dT
