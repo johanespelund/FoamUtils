@@ -62,7 +62,7 @@ class ThermophysicalProperties:
 
         ### equationOfState ###
         if self.properties["thermoType"]["equationOfState"] == "rPolynomial":
-            coeffs = np.flip(self.properties["mixture"]["equationOfState"]["C"])
+            coeffs = self.properties["mixture"]["equationOfState"]["C"]
             self.rho = lambda p, T: rPolynomial(T, p, coeffs)
         elif self.properties["thermoType"]["equationOfState"] == "perfectGas":
             self.rho = lambda p, T: rho_perfectGas(T, p, self.R)
