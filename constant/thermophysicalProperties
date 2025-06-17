@@ -20,8 +20,8 @@ thermoType
   mixture         pureMixture;
   transport       polynomial;
   // transport       const;
-  thermo          hPolynomial;
-  // thermo          hConst;
+  // thermo          hPolynomial;
+  thermo          hConst;
   // equationOfState rPolynomial;
   equationOfState PengRobinsonGas;
   specie          specie;

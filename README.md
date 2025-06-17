@@ -1,6 +1,6 @@
 # FoamUtils
 
-A python package for helpfull OpenFOAM related tasks. WIP.
+A python package for OpenFOAM related tasks. WIP.
 
 ## Installation
 - Install using *pip*
