@@ -234,7 +234,8 @@ def rPolynomial(T, p, coeffs):
     float or ndarray: Density in kg/m³.
     """
     c = coeffs
-    return 1 / (c[0] + c[1] * T + c[2] * T**2 - c[3] * p - c[4] * p * T)
+    rho_inv = (c[0] + (c[1] + c[2]*T - c[4]*p)*T - c[3]*p)
+    return 1 / rho_inv
 
 
 def sutherland_mu(As, Ts, T):
