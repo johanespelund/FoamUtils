@@ -14,7 +14,7 @@ def parse_requirements(filename):
 
 setup(
     name="FoamUtils",
-    version="0.5",
+    version="0.6",
     description="Utility functions for OpenFOAM",
     long_description=readfile("README.md"),
     author="Johan R. Espelund",

@@ -127,13 +127,9 @@ def load_sampling_set(sampling_dir, time, set_name, org=False):
 
 
     for file in files:
-        print(f"Checking if {set_name} is in {file}")
-        print(f"{set_name}" in file)
-
         check = f"{set_name}" in file if org else f"{set_name}_" in file
 
         if check:
-            print(f"Loading {file}")
             filename = f"{sampling_dir}/{time}/{file}"
             filetype = file.split(".")[1]
             
@@ -144,7 +140,6 @@ def load_sampling_set(sampling_dir, time, set_name, org=False):
                     df.columns = [col.replace("_0", "x").replace("_1", "y").replace("_2", "z") for col in df.columns]
                 else:
                     df.columns = [col.replace("_x", "x").replace("_y", "y").replace("_z", "z") for col in df.columns]
-                print(f"Loaded {filename}")
 
 
             elif filetype == "xy":
