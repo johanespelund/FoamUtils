@@ -157,11 +157,11 @@ class ThermophysicalProperties:
         if prop == "rho":
             return "$\\rho$ (kg/m³)"
         elif prop == "Cp":
-            return "$C_p$ (J/kg $\cdot$ K)"
+            return r"$C_p$ (J/kg $\cdot$ K)"
         elif prop == "mu":
-            return "$\\mu$ (Pa $\cdot$ s)"
+            return r"$\mu$ (Pa $\cdot$ s)"
         elif prop == "kappa":
-            return "$\\kappa$ (W/m $\cdot$ K)"
+            return r"$\kappa$ (W/m $\cdot$ K)"
         elif prop == "beta":
             return "$\\beta$ (1/K)"
 

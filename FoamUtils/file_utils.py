@@ -37,7 +37,7 @@ def load(filename, start=0, end=-1):
                 is_comment = False
                 column_names = prev_line[1:].split()
             prev_line = line
-    df = pd.read_csv(filename, comment="#", names=column_names, sep="\s+")
+    df = pd.read_csv(filename, comment="#", names=column_names, sep=r"\s+")
     return df
 
 def load_all_times(times_dir, use_latest_run=True):
@@ -68,7 +68,7 @@ def load_all_times(times_dir, use_latest_run=True):
                         is_comment = False
                         column_names = prev_line[1:].split()
                     prev_line = line
-            df = pd.read_csv(filename, comment="#", names=column_names, sep="\s+")
+            df = pd.read_csv(filename, comment="#", names=column_names, sep=r"\s+")
             # df["time"] = float(time)
             data = pd.concat([data, df], axis=0)
     # Sort by time

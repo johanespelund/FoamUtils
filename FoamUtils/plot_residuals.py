@@ -18,7 +18,7 @@ def plot(dir, res_type, save, dpi, ncol, legend_box, time_unit, time_folder):
         columns.pop(0)
 
     # Read the data file
-    data = pd.read_csv(file_path, skiprows=2, delim_whitespace=True, names=columns)
+    data = pd.read_csv(file_path, skiprows=2, sep=r"\s+", names=columns)
 
     # Convert time to desired unit
     if time_unit == "min":
