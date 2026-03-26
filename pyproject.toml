@@ -7,7 +7,7 @@ name = "foamutils"
 version = "0.6"
 description = "Utility functions for OpenFOAM"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 authors = [
     { name = "Johan R. Espelund", email = "johan.espelund@sintef.no" },
 ]
