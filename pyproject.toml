@@ -19,6 +19,7 @@ dependencies = [
     "pandas>=1.4",
     "PyFoam>=2023.0",
     "scienceplots>=2.0",
+    "packaging>=24.2",
 ]
 
 [project.urls]
