@@ -20,7 +20,14 @@ class ThermophysicalProperties:
         self.file_path = file_path
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File not found: {file_path}")
-        from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
+        try:
+            from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
+        except ImportError as e:
+            raise ImportError(
+                "PyFoam is required to parse thermophysicalProperties files but could not "
+                "be imported. Please ensure PyFoam is correctly installed. "
+                f"Original error: {e}"
+            ) from e
         self.properties = ParsedParameterFile(file_path, doMacroExpansion=True)
         self.M = self.properties["mixture"]["specie"]["molWeight"] * 1e-3
         self.R = 8.31446261815324 / self.M
