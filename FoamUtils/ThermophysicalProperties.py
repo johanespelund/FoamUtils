@@ -261,9 +261,20 @@ def plot_thermophysical_properties(
 ):
     """
     Plot the thermophysical properties of the OpenFOAM case.
+
+    Supports both OpenFOAM.com (thermophysicalProperties) and
+    OpenFOAM.org >= v11 (physicalProperties) file naming conventions.
     """
     T = np.linspace(Tstart, Tend)
-    thermo = ThermophysicalProperties(f"{case_dir}/constant/thermophysicalProperties")
+    thermo_file = os.path.join(case_dir, "constant", "thermophysicalProperties")
+    if not os.path.exists(thermo_file):
+        thermo_file = os.path.join(case_dir, "constant", "physicalProperties")
+    if not os.path.exists(thermo_file):
+        raise FileNotFoundError(
+            f"Neither 'thermophysicalProperties' nor 'physicalProperties' found in "
+            f"'{os.path.join(case_dir, 'constant')}'."
+        )
+    thermo = ThermophysicalProperties(thermo_file)
     thermo.plot(T, p, properties, legend=legend)
 
 
