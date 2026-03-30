@@ -169,3 +169,36 @@ class TestSutherlandKappa:
         kappa = sutherland_kappa(self.As, self.Ts, T, Cp, self.R)
         assert kappa.shape == (3,)
         assert np.all(kappa > 0)
+
+
+# ── PyFoam import-error handling ──────────────────────────────────────────────
+
+class TestPyFoamImportErrorHandling:
+    """Verify that a broken PyFoam install raises a clear, actionable error."""
+
+    def test_broken_pyfoam_raises_helpful_importerror(self, tmp_path, monkeypatch):
+        """ThermophysicalProperties.__init__ converts a broken-PyFoam ImportError."""
+        import builtins
+        import sys
+        from FoamUtils.ThermophysicalProperties import ThermophysicalProperties
+
+        real_import = builtins.__import__
+
+        def mock_import(name, *args, **kwargs):
+            if name.startswith("PyFoam"):
+                raise ImportError("No module named 'PyFoam.ThirdParty.six.moves'")
+            return real_import(name, *args, **kwargs)
+
+        # Create a dummy (empty) file so the FileNotFoundError is not raised first.
+        dummy = tmp_path / "thermophysicalProperties"
+        dummy.write_text("")
+
+        # Remove any cached PyFoam modules so our mock takes effect.
+        cached = [k for k in sys.modules if k.startswith("PyFoam")]
+        for k in cached:
+            monkeypatch.delitem(sys.modules, k)
+
+        monkeypatch.setattr(builtins, "__import__", mock_import)
+
+        with pytest.raises(ImportError, match="PyFoam"):
+            ThermophysicalProperties(str(dummy))

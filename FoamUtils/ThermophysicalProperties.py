@@ -4,7 +4,6 @@ import click
 import matplotlib.pyplot as plt
 import numpy as np
 import scienceplots
-from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 
 plt.style.use(["science", "no-latex", "grid"])
 
@@ -21,6 +20,14 @@ class ThermophysicalProperties:
         self.file_path = file_path
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File not found: {file_path}")
+        try:
+            from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
+        except ImportError as e:
+            raise ImportError(
+                "PyFoam is required to parse thermophysicalProperties files but could not "
+                "be imported. Please ensure PyFoam is correctly installed. "
+                f"Original error: {e}"
+            ) from e
         self.properties = ParsedParameterFile(file_path, doMacroExpansion=True)
         self.M = self.properties["mixture"]["specie"]["molWeight"] * 1e-3
         self.R = 8.31446261815324 / self.M
@@ -261,9 +268,20 @@ def plot_thermophysical_properties(
 ):
     """
     Plot the thermophysical properties of the OpenFOAM case.
+
+    Supports both OpenFOAM.com (thermophysicalProperties) and
+    OpenFOAM.org >= v11 (physicalProperties) file naming conventions.
     """
     T = np.linspace(Tstart, Tend)
-    thermo = ThermophysicalProperties(f"{case_dir}/constant/thermophysicalProperties")
+    thermo_file = os.path.join(case_dir, "constant", "thermophysicalProperties")
+    if not os.path.exists(thermo_file):
+        thermo_file = os.path.join(case_dir, "constant", "physicalProperties")
+    if not os.path.exists(thermo_file):
+        raise FileNotFoundError(
+            f"Neither 'thermophysicalProperties' nor 'physicalProperties' found in "
+            f"'{os.path.join(case_dir, 'constant')}'."
+        )
+    thermo = ThermophysicalProperties(thermo_file)
     thermo.plot(T, p, properties, legend=legend)
 
 
