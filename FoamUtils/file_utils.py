@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import pandas as pd
-from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 
 
 def get_sorted_times(dir):
@@ -17,6 +16,7 @@ def read_parameters(path="parameters"):
     """
     Read the parameters file, in OpenFOAM format, using PyFoam.
     """
+    from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
     return ParsedParameterFile(path, noHeader=True).getValueDict()
 
 

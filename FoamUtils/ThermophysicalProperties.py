@@ -4,7 +4,6 @@ import click
 import matplotlib.pyplot as plt
 import numpy as np
 import scienceplots
-from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 
 plt.style.use(["science", "no-latex", "grid"])
 
@@ -21,6 +20,7 @@ class ThermophysicalProperties:
         self.file_path = file_path
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File not found: {file_path}")
+        from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
         self.properties = ParsedParameterFile(file_path, doMacroExpansion=True)
         self.M = self.properties["mixture"]["specie"]["molWeight"] * 1e-3
         self.R = 8.31446261815324 / self.M
