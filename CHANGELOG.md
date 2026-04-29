@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2
+
+- Improved compatibility with constrained HPC build environments by pinning build backend to `setuptools<77`, avoiding the `packaging.licenses` import path that can fail under isolated builds.
+
 ## 0.7.1
 
 - Fixed build isolation issues in `uv`/HPC environments by declaring explicit build requirements (`setuptools`, `wheel`, `packaging`) in `build-system.requires`.

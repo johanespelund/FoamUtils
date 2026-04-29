@@ -1,13 +1,13 @@
 [build-system]
-requires = ["setuptools>=69,<81", "wheel", "packaging>=24.2"]
+requires = ["setuptools>=69,<77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "foamutils"
-version = "0.7.1"
+version = "0.7.2"
 description = "Utility functions for OpenFOAM"
 readme = "README.md"
-license = "MIT"
+license = { text = "MIT" }
 authors = [
     { name = "Johan R. Espelund", email = "johan.espelund@sintef.no" },
 ]
