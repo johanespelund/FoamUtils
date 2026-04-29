@@ -1,17 +1,17 @@
 [build-system]
-requires = ["setuptools>=61", "packaging>=24.2"]
+requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "foamutils"
-version = "0.6"
+version = "0.7"
 description = "Utility functions for OpenFOAM"
 readme = "README.md"
-license = "MIT"
+license = { text = "MIT" }
 authors = [
     { name = "Johan R. Espelund", email = "johan.espelund@sintef.no" },
 ]
-requires-python = ">=3.10,<=3.11" # Due to pyfoam, python <= 3.12
+requires-python = ">=3.10,<3.13"
 dependencies = [
     "click>=8.0",
     "matplotlib>=3.5",
@@ -19,7 +19,6 @@ dependencies = [
     "pandas>=1.4",
     "PyFoam>=2023.0",
     "scienceplots>=2.0",
-    "packaging>=24.2",
 ]
 
 [project.urls]
